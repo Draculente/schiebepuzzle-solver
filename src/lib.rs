@@ -134,7 +134,7 @@ impl Node {
         }
     }
 
-    fn get_solution(&self) -> Vec<PuzzleState> {
+    fn get_steps(&self) -> Vec<PuzzleState> {
         let mut solution: Vec<PuzzleState> = Vec::new();
         let mut node = self;
         while let Some(parent) = &node.parent {
@@ -162,7 +162,7 @@ fn solver(state: PuzzleState) -> anyhow::Result<Vec<PuzzleState>> {
     while !frontier.is_empty() {
         let (new_node, _) = frontier.pop().unwrap();
         if new_node.state.is_goal() {
-            return Ok(new_node.get_solution());
+            return Ok(new_node.get_steps());
         }
         for action in new_node.state.get_actions() {
             let child = Arc::new(Node::new(action, Some(new_node.clone()), new_node.cost + 1));
