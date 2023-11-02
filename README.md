@@ -2,7 +2,7 @@
 
 This is a solver for the [Schiebepuzzle](https://en.wikipedia.org/wiki/Sliding_puzzle) game. It uses the [A* algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm) to find the shortest amount of steps to the solution.
 
-The only goal of this project is to fiddle around with the A* algorithm.
+The only goal of this project is to tinker with the A* algorithm.
 
 In the current implementation the only possible target state is the following (the empty field is in the top left corner):
 
