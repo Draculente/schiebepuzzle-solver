@@ -121,7 +121,8 @@ impl PuzzleState {
             // res += "├--+--+--+--┤\n";
         }
         res.push_str("└---------------┘\n");
-        res
+        res.replace(" 0 ", " 🗆 ")
+        // res
     }
 
     pub fn from_string(input: &str) -> PuzzleState {
