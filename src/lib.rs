@@ -75,12 +75,12 @@ mod tests {
 
     #[test]
     fn test_solver_solves_in_one_step() {
-        let state = PuzzleState::from_string("1 0 2 3\n4 5 6 7\n8 9 10 11\n12 13 14 15");
+        let state = PuzzleState::from_string("1 0 2\n3 4 5\n6 7 8");
         let solution = solver(state).unwrap();
         assert_eq!(solution.len(), 2);
         assert_eq!(
             solution[solution.len() - 1],
-            PuzzleState::from_string("0 1 2 3\n4 5 6 7\n8 9 10 11\n12 13 14 15")
+            PuzzleState::from_string("0 1 2\n3 4 5\n6 7 8")
         );
     }
 }
