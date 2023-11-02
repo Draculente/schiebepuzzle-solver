@@ -49,7 +49,7 @@ pub fn solver(state: PuzzleState) -> anyhow::Result<Vec<PuzzleState>> {
 
     while !frontier.is_empty() {
         let (node, _) = frontier.pop().ok_or(anyhow::anyhow!("Frontier is empty"))?;
-        if node.state.is_goal() {
+        if node.state.is_target() {
             return Ok(node.get_steps());
         }
         for action in node.state.get_actions() {

@@ -39,8 +39,8 @@ impl PuzzleState {
         PuzzleState { board }
     }
 
-    // TODO: More like compare with the goal state
-    pub fn is_goal(&self) -> bool {
+    // TODO: More like compare with the target state
+    pub fn is_target(&self) -> bool {
         // For now check if the board is sorted
         let mut last = 0;
         for row in 0..3 {
@@ -138,17 +138,17 @@ impl PuzzleState {
         state
     }
 
-    // The heuristic is the sum of the Manhattan distances of each tile to its goal position
+    // The heuristic is the sum of the Manhattan distances of each tile to its target position
     pub fn heuristic(&self) -> u32 {
         let mut h = 0;
         for row in 0..3 {
             for col in 0..3 {
                 let val = self.board[row][col];
                 if val != 0 {
-                    let goal_row = (val) / 3;
-                    let goal_col = (val) % 3;
-                    h += (goal_row as i32 - row as i32).unsigned_abs();
-                    h += (goal_col as i32 - col as i32).unsigned_abs();
+                    let target_row = (val) / 3;
+                    let target_col = (val) % 3;
+                    h += (target_row as i32 - row as i32).unsigned_abs();
+                    h += (target_col as i32 - col as i32).unsigned_abs();
                 }
             }
         }
@@ -167,31 +167,31 @@ mod tests {
     use crate::puzzle_state::PuzzleState;
 
     #[test]
-    fn test_state_with_last_zero_is_not_goal() {
+    fn test_state_with_last_zero_is_not_target() {
         let state = PuzzleState::from_string("1 2 3\n4 5 6\n7 8 0");
-        assert!(!state.is_goal());
+        assert!(!state.is_target());
     }
 
     #[test]
-    fn test_state_with_leading_zero_and_sorted_is_goal() {
+    fn test_state_with_leading_zero_and_sorted_is_target() {
         let state = PuzzleState::from_string("0 1 2\n3 4 5\n6 7 8");
-        assert!(state.is_goal());
+        assert!(state.is_target());
     }
 
     #[test]
-    fn test_state_with_leading_zero_and_unsorted_is_not_goal() {
+    fn test_state_with_leading_zero_and_unsorted_is_not_target() {
         let state = PuzzleState::from_string("0 1 2\n3 4 5\n6 8 7");
-        assert!(!state.is_goal());
+        assert!(!state.is_target());
     }
 
     #[test]
-    fn test_goal_state_has_heuristic_of_zero() {
+    fn test_target_state_has_heuristic_of_zero() {
         let state = PuzzleState::from_string("0 1 2\n3 4 5\n6 7 8");
         assert_eq!(state.heuristic(), 0);
     }
 
     #[test]
-    fn test_state_one_step_away_from_goal_has_heuristic_of_one() {
+    fn test_state_one_step_away_from_target_has_heuristic_of_one() {
         let state = PuzzleState::from_string("1 0 2\n3 4 5\n6 7 8");
         assert_eq!(state.heuristic(), 1);
     }

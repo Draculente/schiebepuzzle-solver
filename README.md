@@ -4,7 +4,7 @@ This is a solver for the [Schiebepuzzle](https://en.wikipedia.org/wiki/Sliding_p
 
 The only goal of this project is to fiddle around with the A* algorithm.
 
-In the current implementation the only possible goal state is the following (the empty field is in the top left corner):
+In the current implementation the only possible target state is the following (the empty field is in the top left corner):
 
 ```
 ┌-----------┐
