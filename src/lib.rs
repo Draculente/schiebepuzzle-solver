@@ -202,4 +202,10 @@ mod tests {
         let state = PuzzleState::from_string("0 1 2 3\n4 5 6 7\n8 9 10 11\n12 13 14 15");
         assert_eq!(state.heuristic(), 0);
     }
+
+    #[test]
+    fn test_state_one_step_away_from_goal_has_heuristic_of_one() {
+        let state = PuzzleState::from_string("1 0 2 3\n4 5 6 7\n8 9 10 11\n12 13 15 14");
+        assert_eq!(state.heuristic(), 1);
+    }
 }
