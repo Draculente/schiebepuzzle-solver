@@ -66,7 +66,7 @@ pub fn solver(state: PuzzleState) -> anyhow::Result<Vec<PuzzleState>> {
         }
     }
 
-    Err(anyhow::anyhow!("No solution found"))
+    Err(anyhow::anyhow!("There is no solution"))
 }
 
 #[cfg(test)]
