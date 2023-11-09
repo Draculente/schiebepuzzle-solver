@@ -115,7 +115,7 @@ fn handle_solution(solution: &Vec<PuzzleState>) -> anyhow::Result<()> {
     println!("Solution length: {}", solution.len());
     let solution_file = "solution.txt";
 
-    let mut file = File::create(solution_file).unwrap();
+    let mut file = File::create(solution_file)?;
     for step in solution {
         file.write_all(format!("{}\n", step).as_bytes())?;
     }
