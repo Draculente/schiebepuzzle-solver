@@ -42,7 +42,7 @@ fn read_from_command_line() -> anyhow::Result<PuzzleState> {
     let mut input = String::new();
 
     let mut lines = 0;
-    while lines < 3 {
+    while lines < 4 {
         let mut line: String = promptly::prompt("Enter line")?;
         if let Err(e) = validate_line(&line) {
             println!("Error: {}", e);
@@ -65,13 +65,13 @@ fn validate_line(line: &String) -> anyhow::Result<&String> {
         numbers.push(number.parse()?);
     }
 
-    if numbers.len() != 3 {
-        Err(anyhow::anyhow!("Line must contain 3 numbers"))?;
+    if numbers.len() != 4 {
+        Err(anyhow::anyhow!("Line must contain 4 numbers"))?;
     }
 
     for number in numbers {
-        if number > 8 {
-            Err(anyhow::anyhow!("Number must be between 0 and 8"))?;
+        if number > 15 {
+            Err(anyhow::anyhow!("Number must be between 0 and 15"))?;
         }
     }
 
@@ -82,8 +82,8 @@ fn validate_input(input: &String) -> anyhow::Result<&String> {
     let lines = input.lines();
     let mut numbers: Vec<u32> = Vec::new();
 
-    if lines.count() != 3 {
-        Err(anyhow::anyhow!("Input must contain 3 lines"))?;
+    if lines.count() != 4 {
+        Err(anyhow::anyhow!("Input must contain 4 lines"))?;
     }
 
     for line in input.lines() {
@@ -92,17 +92,17 @@ fn validate_input(input: &String) -> anyhow::Result<&String> {
         }
     }
 
-    if numbers.len() != 9 {
-        Err(anyhow::anyhow!("Input must contain 9 numbers"))?;
+    if numbers.len() != 16 {
+        Err(anyhow::anyhow!("Input must contain 16 numbers"))?;
     }
 
     for number in &numbers {
-        if number > &8 {
-            Err(anyhow::anyhow!("Number must be between 0 and 8"))?;
+        if number > &15 {
+            Err(anyhow::anyhow!("Number must be between 0 and 15"))?;
         }
     }
 
-    if numbers.into_iter().unique().count() != 9 {
+    if numbers.into_iter().unique().count() != 16 {
         Err(anyhow::anyhow!("Numbers must be unique"))?;
     }
 

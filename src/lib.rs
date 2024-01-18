@@ -38,22 +38,51 @@ impl Node {
     }
 }
 
+enum IterationResult {
+    Solved(Vec<PuzzleState>),
+    MinEvaluated(u32),
+}
+
 // Try to solve the puzzle using A* search
 pub fn solver(state: PuzzleState) -> anyhow::Result<Vec<PuzzleState>> {
+    let mut max_f = 0;
+    let mut min_evaluated = std::u32::MAX;
+
+    while min_evaluated > max_f {
+        let new_max_f = min_evaluated;
+        match solver_iteration(state.clone(), new_max_f) {
+            IterationResult::Solved(solution) => return Ok(solution),
+            IterationResult::MinEvaluated(min) => {
+                min_evaluated = min;
+                max_f = new_max_f;
+            }
+        }
+    }
+
+    Err(anyhow::anyhow!("There is no solution"))
+}
+
+fn solver_iteration(state: PuzzleState, max_f: u32) -> IterationResult {
     let first_node = Arc::new(Node::new(state, None, 0));
     let mut frontier: PriorityQueue<Arc<Node>, Reverse<u32>> = PriorityQueue::new();
     let mut reached: HashMap<Arc<PuzzleState>, Arc<Node>> = HashMap::new();
+
+    let mut min_evaluated = std::u32::MAX;
 
     let f = first_node.f();
     frontier.push(first_node, Reverse(f));
 
     while !frontier.is_empty() {
-        let (node, _) = frontier.pop().ok_or(anyhow::anyhow!("Frontier is empty"))?;
+        let (node, _) = frontier.pop().unwrap();
         if node.state.is_target() {
-            return Ok(node.get_steps());
+            return IterationResult::Solved(node.get_steps());
         }
         for action in node.state.get_actions() {
             let child = Arc::new(Node::new(action, Some(node.clone()), node.cost + 1));
+            if child.f() > max_f {
+                min_evaluated = min_evaluated.min(child.f());
+                continue;
+            }
             if !reached.contains_key(&child.state) {
                 reached.insert(child.state.clone(), child.clone());
                 frontier.push(child.clone(), Reverse(child.f()));
@@ -66,7 +95,7 @@ pub fn solver(state: PuzzleState) -> anyhow::Result<Vec<PuzzleState>> {
         }
     }
 
-    Err(anyhow::anyhow!("There is no solution"))
+    IterationResult::MinEvaluated(min_evaluated)
 }
 
 #[cfg(test)]
@@ -75,12 +104,12 @@ mod tests {
 
     #[test]
     fn test_solver_solves_in_one_step() {
-        let state = PuzzleState::from_string("1 0 2\n3 4 5\n6 7 8");
+        let state = PuzzleState::from_string("1 0 2 3\n4 5 6 7\n8 9 10 11\n12 13 14 15");
         let solution = solver(state).unwrap();
         assert_eq!(solution.len(), 2);
         assert_eq!(
             solution[solution.len() - 1],
-            PuzzleState::from_string("0 1 2\n3 4 5\n6 7 8")
+            PuzzleState::from_string("0 1 2 3\n4 5 6 7\n8 9 10 11\n12 13 14 15")
         );
     }
 }
