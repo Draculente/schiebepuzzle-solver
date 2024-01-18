@@ -33,6 +33,17 @@ impl Node {
         solution
     }
 
+    fn has_self_in_path(&self) -> bool {
+        let mut node = self;
+        while let Some(parent) = &node.parent {
+            if node.state == parent.state {
+                return true;
+            }
+            node = parent;
+        }
+        false
+    }
+
     fn f(&self) -> u32 {
         self.cost + self.state.heuristic()
     }
@@ -43,13 +54,14 @@ enum IterationResult {
     MinEvaluated(u32),
 }
 
-// Try to solve the puzzle using A* search
+// Try to solve the puzzle using IDA* search (https://en.wikipedia.org/wiki/Iterative_deepening_A*)
 pub fn solver(state: PuzzleState) -> anyhow::Result<Vec<PuzzleState>> {
     let mut max_f = 0;
-    let mut min_evaluated = std::u32::MAX;
+    let mut min_evaluated = 1;
 
     while min_evaluated > max_f {
         let new_max_f = min_evaluated;
+        println!("Starting iteration with maximum f of: {}", new_max_f);
         match solver_iteration(state.clone(), new_max_f) {
             IterationResult::Solved(solution) => return Ok(solution),
             IterationResult::MinEvaluated(min) => {
@@ -63,17 +75,16 @@ pub fn solver(state: PuzzleState) -> anyhow::Result<Vec<PuzzleState>> {
 }
 
 fn solver_iteration(state: PuzzleState, max_f: u32) -> IterationResult {
-    let first_node = Arc::new(Node::new(state, None, 0));
-    let mut frontier: PriorityQueue<Arc<Node>, Reverse<u32>> = PriorityQueue::new();
-    let mut reached: HashMap<Arc<PuzzleState>, Arc<Node>> = HashMap::new();
-
     let mut min_evaluated = std::u32::MAX;
 
-    let f = first_node.f();
-    frontier.push(first_node, Reverse(f));
+    let mut frontier: Vec<Arc<Node>> = Vec::new();
+
+    let first_node = Arc::new(Node::new(state, None, 0));
+
+    frontier.push(first_node);
 
     while !frontier.is_empty() {
-        let (node, _) = frontier.pop().unwrap();
+        let node = frontier.pop().unwrap();
         if node.state.is_target() {
             return IterationResult::Solved(node.get_steps());
         }
@@ -83,14 +94,8 @@ fn solver_iteration(state: PuzzleState, max_f: u32) -> IterationResult {
                 min_evaluated = min_evaluated.min(child.f());
                 continue;
             }
-            if !reached.contains_key(&child.state) {
-                reached.insert(child.state.clone(), child.clone());
-                frontier.push(child.clone(), Reverse(child.f()));
-            } else if child.cost < reached[&child.state].cost {
-                // Remove the old (worse) node
-                frontier.remove(&reached[&child.state]);
-                reached.insert(child.state.clone(), child.clone());
-                frontier.push(child.clone(), Reverse(child.f()));
+            if !child.has_self_in_path() {
+                frontier.push(child.clone());
             }
         }
     }
