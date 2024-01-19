@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use schiebepuzzle_solver::{self, PuzzleState};
+use std::time::Instant;
 
 fn main() {
     let start_state = match read_from_command_line() {
@@ -22,7 +23,14 @@ fn main() {
 
     println!("Solving...(this may take a long while and a lot of memory)");
 
+    let now = Instant::now();
     let solution = schiebepuzzle_solver::solver(start_state);
+    let elapsed = now.elapsed();
+
+    // Write elapsed time to file
+    let mut file = File::create("elapsed.txt").unwrap();
+    file.write_all(format!("{}\n", elapsed.as_secs_f64()).as_bytes())
+        .unwrap();
 
     match solution {
         Ok(solution) => {
