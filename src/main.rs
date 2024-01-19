@@ -129,7 +129,7 @@ fn handle_solution(solution: &Vec<PuzzleState>) -> anyhow::Result<()> {
     }
     println!("Solution written to {}", solution_file);
 
-    solution_step_by_step(solution)?;
+    // solution_step_by_step(solution)?;
 
     println!("Done!");
 
